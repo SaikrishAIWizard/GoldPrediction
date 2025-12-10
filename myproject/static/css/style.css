@@ -1,0 +1,230 @@
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #E4BD58;
+}
+
+/* Body Layout with background image */
+body {
+    background: url('../images/signup.png') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation Bar */
+/* === Navbar === */
+nav {
+    background: linear-gradient(90deg, #254f9d, #3366cc);
+    color: #fff;
+    padding: 1rem 2.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+nav .logo {
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 1.2px;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+nav ul li a {
+    color: #f3f3f3;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.25s ease-in-out;
+}
+
+nav ul li a:hover {
+    background: rgba(255,255,255,0.12);
+    color: #ffd75a;
+}
+
+.btn-nav {
+    background: #e0b84d;
+    color: #222 !important;
+    font-weight: 600;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    transition: background 0.25s;
+}
+.btn-nav:hover {
+    background: #ffd75a;
+}
+
+/* === Home Page === */
+.home-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding: 2.5rem 1rem;
+}
+
+.dashboard-options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1000px;
+    width: 100%;
+}
+
+/* Option Cards */
+.option-card {
+    background: linear-gradient(145deg, #a2cbed, #d3e6f7);
+    border: 2px solid #e0b84d;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    flex: 1 1 280px;
+    min-width: 260px;
+    max-width: 330px;
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s;
+}
+
+.option-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.12);
+    border-color: #0b4d2f;
+}
+
+.option-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #244676;
+}
+
+.option-desc {
+    font-size: 1rem;
+    color: #003366;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .dashboard-options {
+        flex-direction: column;
+        align-items: center;
+    }
+    .option-card {
+        width: 92vw;
+        max-width: 96vw;
+    }
+}
+
+/* Centering wrapper */
+.auth-page-wrapper {
+    flex: 1; /* take available vertical space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Improved form card look */
+.auth-form {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 420px;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Add subtle animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs more modern */
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1.8px solid #ddd;
+    background: #f9fbff;
+    transition: all 0.25s ease;
+}
+.auth-form input:focus {
+    border-color: #8f5183;
+    background: #eef6fd;
+    box-shadow: 0 0 6px rgba(33, 134, 235, 0.2);
+    outline: none;
+}
+
+/* Button with gradient */
+.btn {
+    background: linear-gradient(135deg, #2186eb, #1663c7);
+    color: #fff;
+    padding: 0.9rem 1.3rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 12px;
+}
+.btn:hover {
+    background: linear-gradient(135deg, #f872e4, #2186eb);
+    box-shadow: 0 4px 12px rgba(33,134,235,0.3);
+}
+
+/* Footer link softer */
+.auth-form p {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: #444;
+}
+.auth-form p a {
+    color: #2186eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+.auth-form p a:hover {
+    color: #1663c7;
+    text-decoration: underline;
+}
+

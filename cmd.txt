@@ -1,0 +1,20 @@
+python -m venv venv
+
+python version Python 3.10.0
+
+pip uninstall pmdarima numpy -y
+pip cache purge
+pip install "numpy==1.26.4" "pmdarima==2.0.4"
+
+
+wedding-photo-saver@wedding-photo-booth-478813.iam.gserviceaccount.com
+
+
+SERVICE_ACCOUNT_FILE = 'service_account.json' # Located in the root folder
+DRIVE_FOLDER_ID = '1l7aOV9tK-_I8T84tnbrsGR7t1o8fmYvr' #'YOUR_GOOGLE_DRIVE_FOLDER_ID' 
+SPREADSHEET_KEY = '1gTyJBVny_rkP44c58bkdQ1w38ZmD-kJ8bJy4Z8joVpE' #'YOUR_GOOGLE_SHEET_KEY'      # For data logging (Name, Contact, Photo Link)
+
+
+from Src.one_Min_Photography.UI.streamlitui.loadui import WeddingPhotoView
+# Import the Handler/Service class
+from Src.one_Min_Photography.google_drive.gdrive_handler import GoogleDriveHandler

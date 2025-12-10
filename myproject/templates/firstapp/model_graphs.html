@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Model Graphs{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/model_graphs.css' %}">
+{% endblock %}
+{% block content %}
+<div class="dashboard-page">
+  <h2>Model Graphs</h2>
+  <p>This page will display important graphs—accuracy, MAE, RMSE, MAPE, R2 scores</p>
+  <div class="chart-container">
+    <canvas id="modelMetricsChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Parse metrics passed from Django context
+  const metricsData = {{ metrics|safe }};
+  
+  const labels = ['Day Model', 'Week Model', 'Month Model', 'Year Model'];
+  const maeData = [
+    metricsData.LSTM_daymodel.mae,
+    metricsData.LSTM_weekmodel.mae,
+    metricsData.LSTM_monthmodel.mae,
+    metricsData.LSTM_yearmodel.mae
+  ];
+  const rmseData = [
+    metricsData.LSTM_daymodel.rmse,
+    metricsData.LSTM_weekmodel.rmse,
+    metricsData.LSTM_monthmodel.rmse,
+    metricsData.LSTM_yearmodel.rmse
+  ];
+  const mapeData = [
+    metricsData.LSTM_daymodel.mape,
+    metricsData.LSTM_weekmodel.mape,
+    metricsData.LSTM_monthmodel.mape,
+    metricsData.LSTM_yearmodel.mape
+  ];
+  const r2Data = [
+    metricsData.LSTM_daymodel.r2_lstm,
+    metricsData.LSTM_weekmodel.r2_lstm,
+    metricsData.LSTM_monthmodel.r2_lstm,
+    metricsData.LSTM_yearmodel.r2_lstm
+  ];
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'MAE',
+        data: maeData,
+        borderColor: 'rgba(255, 99, 132, 0.8)',
+        backgroundColor: 'rgba(255, 99, 132, 0.3)',
+        yAxisID: 'y1',
+      },
+      {
+        label: 'RMSE',
+        data: rmseData,
+        borderColor: 'rgba(54, 162, 235, 0.8)',
+        backgroundColor: 'rgba(54, 162, 235, 0.3)',
+        yAxisID: 'y1',
+      },
+      {
+        label: 'MAPE (%)',
+        data: mapeData,
+        borderColor: 'rgba(255, 206, 86, 0.8)',
+        backgroundColor: 'rgba(255, 206, 86, 0.3)',
+        yAxisID: 'y1',
+      },
+      {
+        label: 'R2 Score',
+        data: r2Data,
+        borderColor: 'rgba(75, 192, 192, 0.8)',
+        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+        yAxisID: 'y2',
+      }
+    ]
+  };
+
+  const config = {
+    type: 'line',
+    data,
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      stacked: false,
+      scales: {
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          title: { display: true, text: 'Error Metrics (MAE, RMSE, MAPE)' },
+        },
+        y2: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          min: 0,
+          max: 110,
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'R2 Score (%)' },
+        },
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { enabled: true },
+      },
+    },
+  };
+
+  new Chart(document.getElementById('modelMetricsChart'), config);
+</script>
+{% endblock %}

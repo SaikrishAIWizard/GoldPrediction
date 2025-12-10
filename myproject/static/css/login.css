@@ -1,0 +1,113 @@
+/* Reset and base style */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Body with full viewport height */
+body, html {
+  height: 100%;
+  background: url('../images/background.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* Flex wrapper to center the form vertically and horizontally */
+.auth-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* full screen height */
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Login form container styling */
+.auth-form {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 24px rgba(51,102,204,0.13);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Login heading */
+.auth-form h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3366cc;
+  margin-bottom: 1.5rem;
+}
+
+/* Form styling */
+.auth-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Input fields */
+.auth-form input[type="text"],
+.auth-form input[type="password"],
+.auth-form input[type="email"] {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #bdd4f7;
+  border-radius: 8px;
+  background: #eef5fc;
+  transition: border-color 0.3s ease;
+}
+
+.auth-form input[type="text"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="email"]:focus {
+  border-color: #3366cc;
+  outline: none;
+  background: #e6f0ff;
+}
+
+/* Submit button */
+.auth-form .btn {
+  background: linear-gradient(90deg, #3366cc, #254f9d);
+  color: white;
+  padding: 0.8rem 0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border: none;
+}
+
+.auth-form .btn:hover {
+  background: #254f9d;
+}
+
+/* Signup link */
+.auth-form p {
+  margin-top: 1.2rem;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.auth-form p a {
+  color: #3366cc;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.auth-form p a:hover {
+  color: #1a265f;
+}
+
+/* Responsive */
+@media (max-width: 450px) {
+  .auth-form {
+    padding: 1.5rem 1.8rem;
+  }
+}

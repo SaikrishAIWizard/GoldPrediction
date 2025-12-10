@@ -1,0 +1,188 @@
+/* signup.css */
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* Body Layout with background image */
+body {
+    background: url('../images/signup.png') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: #3366cc;  /* Blue */
+    color: rgb(241, 241, 245);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(43, 3, 117, 0.15);
+}
+
+nav h2 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1.5px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+nav ul li {
+    align-self: center;
+}
+
+nav ul li a {
+    color: rgb(240, 240, 245);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #254f9d; /* Darker blue */
+}
+
+/* Main signup form container */
+.auth-form {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(33, 134, 235, 0.18);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Heading styling */
+.auth-form h2 {
+    color: #1663c7;
+    margin-bottom: 2rem;
+    font-weight: 800;
+    font-size: 2.1rem;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Form element alignment and width */
+.auth-form form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1.25rem;
+}
+
+.auth-form label {
+    font-weight: 600;
+    color: #1663c7;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: left;
+}
+
+/* Input fields styling */
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: 9px;
+    border: 2px solid #e7e7e7;
+    background: #f7fafd;
+    transition: border-color 0.3s;
+    margin-bottom: 3px;
+}
+.auth-form input[type="text"]:focus,
+.auth-form input[type="email"]:focus,
+.auth-form input[type="password"]:focus {
+    border-color: #2186eb;
+    background: #eef6fd;
+    outline: none;
+}
+
+/* Initially hide helptexts and error lists */
+.auth-form .helptext,
+.auth-form ul.errorlist {
+    display: none; /* hide by default */
+    color: #d93025; /* red for errors */
+    font-size: 0.95rem;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Show error messages if present */
+ul.errorlist {
+    display: block;
+    list-style-type: disc;
+    padding-left: 1.25rem;
+}
+
+/* Button styling */
+.btn {
+    background: linear-gradient(100deg, #2186eb 90%, #1663c7 100%);
+    color: #fff;
+    padding: 0.8rem 1.3rem;
+    font-weight: 700;
+    font-size: 1.03rem;
+    border-radius: 11px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(33,134,235,0.11);
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.25s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background: #1663c7;
+    box-shadow: 0 4px 14px rgba(33,134,235,0.20);
+}
+
+/* Footer link */
+.auth-form p {
+    margin-top: 1.1rem;
+    font-size: 1rem;
+    color: #555;
+    text-align: center;
+}
+
+.auth-form p a {
+    color: #2186eb;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color 0.25s;
+}
+
+.auth-form p a:hover {
+    color: #1663c7;
+}
+
+/* Responsive design for phones */
+@media (max-width: 480px) {
+    .auth-form {
+        padding: 1.2rem 0.7rem;
+    }
+
+    .auth-form h2 {
+        font-size: 1.4rem;
+    }
+}

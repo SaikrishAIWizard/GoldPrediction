@@ -1,0 +1,195 @@
+/* --- Base Styles and Dark Mode --- */
+body {
+    background-color: #12121e;
+    color: #e0e0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    padding: 20px;
+}
+
+/* --- Form and Card Styles --- */
+.forecast-form-card {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #1e1e2f;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.forecast-form-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+}
+
+.forecast-form-card h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #4caf50;
+}
+
+.forecast-form-card .subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #a0a0b0;
+}
+
+.forecast-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 600;
+    color: #b0b0c0;
+}
+
+select,
+.duration-inputs input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #3c3c60;
+    border-radius: 8px;
+    background-color: #2b2b42;
+    color: #e0e0f0;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+select:focus,
+.duration-inputs input:focus {
+    outline: none;
+    border-color: #4caf50;
+    background-color: #3c3c60;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.duration-inputs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.duration-inputs input {
+    flex: 1;
+    min-width: 100px;
+}
+
+.forecast-btn {
+    padding: 15px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.forecast-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+/* --- Collapsible Chart Containers --- */
+.chart-container {
+    max-width: 700px;
+    margin: 25px auto;
+}
+
+.collapsible {
+    background-color: #2b2b42;
+    color: #e0e0f0;
+    cursor: pointer;
+    padding: 15px 25px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.collapsible:hover {
+    background-color: #3c3c60;
+}
+
+.collapsible.active {
+    border-radius: 8px 8px 0 0;
+}
+
+.collapsible::after {
+    content: '▶';
+    font-size: 1.1rem;
+    color: #4caf50;
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 0.3s ease-in-out;
+}
+
+.collapsible.active::after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.content {
+    background-color: #1e1e2f;
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+.content canvas {
+    width: 100% !important;
+    height: 400px !important;
+    padding: 20px 0;
+    box-sizing: border-box;
+}
+
+/* --- Media Queries for Responsiveness --- */
+@media (max-width: 768px) {
+    .forecast-form-card {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .collapsible,
+    .chart-container,
+    .content {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .duration-inputs {
+        flex-direction: column;
+    }
+
+    .duration-inputs input {
+        min-width: unset;
+    }
+}

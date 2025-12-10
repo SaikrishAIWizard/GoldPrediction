@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Backtesting{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/back_testing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="backtesting-card">
+  <h2>Backtesting</h2>
+  <p>Enter the number of days to perform your model's backtest.</p>
+  <form method="post" class="backtest-form" autocomplete="off">
+    {% csrf_token %}
+    <label for="num_days">Number of Days:</label>
+    <input type="number" id="num_days" name="num_days" min="1" max="365" required placeholder="e.g. 30">
+    <button type="submit">Run Backtest</button>
+  </form>
+  {% if result %}
+    <div class="backtest-result">
+      <h3>Backtest Result</h3>
+      <pre>{{ result }}</pre>
+    </div>
+  {% endif %}
+</div>
+
+{% if day_dates_list and real_close_values and signal %}
+<div class="chart-card">
+  <h3>Real Close Price with Buy/Sell Signals</h3>
+  <div class="chart-container">
+    <canvas id="realCloseChart"></canvas>
+  </div>
+</div>
+{% endif %}
+
+{% if day_dates_list and pred_close_values %}
+<div class="chart-card">
+  <h3>Predicted Close Price</h3>
+  <div class="chart-container">
+    <canvas id="predictedChart"></canvas>
+  </div>
+</div>
+{% endif %}
+
+{% if day_dates_list and net_profit %}
+<div class="chart-card">
+  <h3>Net Profit from Trading Strategy</h3>
+  <div class="chart-container">
+    <canvas id="profitChart"></canvas>
+  </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const dayDates = JSON.parse('{{ day_dates_list|escapejs }}');
+  const predClose = JSON.parse('{{ pred_close_values|escapejs }}');
+  const realClose = JSON.parse('{{ real_close_values|escapejs }}');
+  const netProfit = JSON.parse('{{ net_profit|escapejs }}');
+  const signals = JSON.parse('{{ signal|escapejs }}');
+
+  function formatDates(dateArray) {
+    return dateArray.map(d => new Date(d).toLocaleDateString());
+  }
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        title: { display: true, text: 'Date', color: '#555' },
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { color: '#333' }
+      },
+      y: {
+        title: { display: true, text: 'Price / Profit ($)', color: '#555' },
+        grid: { color: 'rgba(0,0,0,0.05)' },
+        ticks: { color: '#333' }
+      }
+    },
+    plugins: {
+      legend: { labels: { color: '#333' } }
+    }
+  };
+
+  // Real Close + Signals
+  if (dayDates.length && realClose.length) {
+    const buyPoints = realClose.map((p, i) => signals[i] === 'buy' ? p : null);
+    const sellPoints = realClose.map((p, i) => signals[i] === 'sell' ? p : null);
+
+    new Chart(document.getElementById('realCloseChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: formatDates(dayDates),
+        datasets: [
+          {
+            label: 'Real Close',
+            data: realClose,
+            borderColor: '#ff4d6d',
+            backgroundColor: 'rgba(255,77,109,0.2)',
+            fill: true,
+            tension: 0.2
+          },
+          {
+            label: 'Buy Signal',
+            data: buyPoints,
+            borderColor: 'green',
+            backgroundColor: 'green',
+            pointRadius: 6,
+            type: 'scatter',
+            showLine: false
+          },
+          {
+            label: 'Sell Signal',
+            data: sellPoints,
+            borderColor: 'red',
+            backgroundColor: 'red',
+            pointRadius: 6,
+            type: 'scatter',
+            showLine: false
+          }
+        ]
+      },
+      options: commonOptions
+    });
+  }
+
+  // Predicted Close
+  if (dayDates.length && predClose.length) {
+    new Chart(document.getElementById('predictedChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: formatDates(dayDates),
+        datasets: [{
+          label: 'Predicted Close',
+          data: predClose,
+          borderColor: '#36a2eb',
+          backgroundColor: 'rgba(54,162,235,0.2)',
+          fill: true,
+          tension: 0.2
+        }]
+      },
+      options: commonOptions
+    });
+  }
+
+  // Net Profit
+  if (dayDates.length && netProfit.length) {
+    new Chart(document.getElementById('profitChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: formatDates(dayDates),
+        datasets: [{
+          label: 'Net Profit',
+          data: netProfit,
+          backgroundColor: netProfit.map(p => p >= 0 ? 'rgba(54, 162, 235, 0.7)' : 'rgba(244, 67, 54, 0.7)'),
+          borderColor: netProfit.map(p => p >= 0 ? '#36a2eb' : '#f44336'),
+          borderWidth: 1
+        }]
+      },
+      options: commonOptions
+    });
+  }
+});
+</script>
+{% endblock %}

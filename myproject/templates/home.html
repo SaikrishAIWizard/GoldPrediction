@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Home - Gold Price Prediction{% endblock %}
+{% block content %}
+<div class="home-wrapper">
+  {% if user.is_authenticated %}
+    <div class="dashboard-options">
+      <a href="{% url 'train_model' %}" class="option-card">
+        <span class="option-title">Train the Model</span>
+        <span class="option-desc">Train your machine learning model with latest data.</span>
+      </a>
+      <a href="{% url 'forecast' %}" class="option-card">
+        <span class="option-title">Forecast the Gold Price</span>
+        <span class="option-desc">Use your trained model to predict future prices.</span>
+      </a>
+      <a href="{% url 'model_graphs' %}" class="option-card">
+        <span class="option-title">Model Graphs</span>
+        <span class="option-desc">See accuracy, trend, error rate and more.</span>
+      </a>
+      <a href="{% url 'Back_Testing' %}" class="option-card">
+        <span class="option-title">Back Testing the Model</span>
+        <span class="option-desc">Will compare our model with realtime prices</span>
+      </a>
+    </div>
+  {% else %}
+  <h2>Welcome to Gold Price Prediction Portal</h2>
+  {% endif %}
+</div>
+{% endblock %}

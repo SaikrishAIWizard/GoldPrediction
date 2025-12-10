@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Forecast - Stock Price Prediction{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forecast.css' %}">
+<style>
+/* Funny loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(20, 20, 30, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    display: none; /* Hidden by default */
+}
+
+.loading-animation {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="forecast-form-card">
+        <h2>GOLD Price Forecast 📈</h2>
+        <p class="subtitle">Select a stock and the duration for your price prediction.</p>
+        <form method="post" action="{% url 'forecast' %}" class="forecast-form" id="forecastForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="days_forecast">Forecast Duration:</label>
+                <div class="duration-inputs">
+                    <input type="number" id="days_forecast" name="days_forecast" min="0" max="60"
+                        value="{{ days_forecast|default:'' }}" placeholder="Days (< 60)">
+                    <input type="number" id="weeks_forecast" name="weeks_forecast" min="0" max="30"
+                        value="{{ weeks_forecast|default:'' }}" placeholder="Weeks (< 30)">
+                    <input type="number" id="months_forecast" name="months_forecast" min="0" max="24"
+                        value="{{ months_forecast|default:'' }}" placeholder="Months (< 24)">
+                    <input type="number" id="years_forecast" name="years_forecast" min="0"
+                        value="{{ years_forecast|default:'' }}" placeholder="Years">
+                </div>
+            </div>
+
+            <button type="submit" class="forecast-btn">Get Forecast</button>
+        </form>
+    </div>
+
+    <!-- Chart containers with collapsible feature -->
+    {% if day_dates and day_values %}
+    <div class="chart-container">
+        <button class="collapsible" data-chart-id="dayChart">Daily Forecast 📊</button>
+        <div class="content">
+            <canvas id="dayChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if week_dates and week_values %}
+    <div class="chart-container">
+        <button class="collapsible" data-chart-id="weekChart">Weekly Forecast 📈</button>
+        <div class="content">
+            <canvas id="weekChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if month_dates and month_values %}
+    <div class="chart-container">
+        <button class="collapsible" data-chart-id="monthChart">Monthly Forecast 💹</button>
+        <div class="content">
+            <canvas id="monthChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if year_labels and year_yhat %}
+    <div class="chart-container">
+        <button class="collapsible" data-chart-id="yearChart">Yearly Forecast 📆</button>
+        <div class="content">
+            <canvas id="yearChart"></canvas>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Funny Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-animation">🐂📈 vs 🐻📉</div>
+    <p>Crunching numbers... Stock market battles are happening, please wait! ⏳</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Show loading screen when form is submitted
+    document.getElementById("forecastForm").addEventListener("submit", function () {
+        document.getElementById("loadingOverlay").style.display = "flex";
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dayDates = '{{ day_dates|safe|escapejs }}'.length > 0 ? JSON.parse('{{ day_dates|safe|escapejs }}') : [];
+        const dayValues = '{{ day_values|safe|escapejs }}'.length > 0 ? JSON.parse('{{ day_values|safe|escapejs }}') : [];
+        const weekDates = '{{ week_dates|safe|escapejs }}'.length > 0 ? JSON.parse('{{ week_dates|safe|escapejs }}') : [];
+        const weekValues = '{{ week_values|safe|escapejs }}'.length > 0 ? JSON.parse('{{ week_values|safe|escapejs }}') : [];
+        const monthDates = '{{ month_dates|safe|escapejs }}'.length > 0 ? JSON.parse('{{ month_dates|safe|escapejs }}') : [];
+        const monthValues = '{{ month_values|safe|escapejs }}'.length > 0 ? JSON.parse('{{ month_values|safe|escapejs }}') : [];
+        const yearLabels = '{{ year_labels|safe|escapejs }}'.length > 0 ? JSON.parse('{{ year_labels|safe|escapejs }}') : [];
+        const yearYhat = '{{ year_yhat|safe|escapejs }}'.length > 0 ? JSON.parse('{{ year_yhat|safe|escapejs }}') : [];
+        // Removed upper and lower bounds parsing because not used anymore for year chart
+        // const yearUpper = '{{ year_upper|safe|escapejs }}'.length > 0 ? JSON.parse('{{ year_upper|safe|escapejs }}') : [];
+        // const yearLower = '{{ year_lower|safe|escapejs }}'.length > 0 ? JSON.parse('{{ year_lower|safe|escapejs }}') : [];
+
+        function formatDates(dateArray) {
+            return dateArray.map(d => new Date(d).toLocaleDateString());
+        }
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Date', color: '#a0a0b0' },
+                    grid: { color: 'rgba(200, 200, 200, 0.1)' },
+                    ticks: { color: '#e0e0f0' }
+                },
+                y: {
+                    title: { display: true, text: 'Price in $', color: '#a0a0b0' },
+                    grid: { color: 'rgba(200, 200, 200, 0.1)' },
+                    ticks: { color: '#e0e0f0' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#e0e0f0' } }
+            }
+        };
+
+        const charts = {};
+        const collapsibles = document.getElementsByClassName("collapsible");
+
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+
+                    const chartId = this.getAttribute('data-chart-id');
+                    if (chartId && !charts[chartId]) {
+                        setTimeout(() => {
+                            const ctx = document.getElementById(chartId).getContext('2d');
+                            let data = [], label = '', borderColor = '', backgroundColor = '', labels = [];
+
+                            if (chartId === 'dayChart') {
+                                data = dayValues;
+                                labels = dayDates;
+                                label = 'Daily Forecast';
+                                borderColor = 'rgba(75, 192, 192, 1)';
+                                backgroundColor = 'rgba(75, 192, 192, 0.2)';
+                            } else if (chartId === 'weekChart') {
+                                data = weekValues;
+                                labels = weekDates;
+                                label = 'Weekly Forecast';
+                                borderColor = 'rgba(255, 159, 64, 1)';
+                                backgroundColor = 'rgba(255, 159, 64, 0.2)';
+                            } else if (chartId === 'monthChart') {
+                                data = monthValues;
+                                labels = monthDates;
+                                label = 'Monthly Forecast';
+                                borderColor = 'rgba(153, 102, 255, 1)';
+                                backgroundColor = 'rgba(153, 102, 255, 0.2)';
+                            } else if (chartId === 'yearChart' && yearLabels.length > 0) {
+                                data = yearYhat;
+                                labels = yearLabels;
+                                label = 'Yearly Forecast';
+                                borderColor = 'rgba(54, 162, 235, 1)';
+                                backgroundColor = 'rgba(54, 162, 235, 0.2)';
+                            }
+
+                            const datasets = [{
+                                label: label,
+                                data: data,
+                                borderColor: borderColor,
+                                backgroundColor: backgroundColor,
+                                fill: true,
+                                tension: 0.3
+                            }];
+
+                            charts[chartId] = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: formatDates(labels),
+                                    datasets: datasets
+                                },
+                                options: commonOptions
+                            });
+                        }, 300); // Wait for expand transition
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

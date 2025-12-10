@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Train the Model{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/train_model.css' %}">
+<style>
+  .charts-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .chart-wrapper {
+    width: 300px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="centered-wrapper">
+  <div class="dynamic-train-page">
+    <h2>Train the Model{% if last_updated_date %} (Last updated: {{ last_updated_date }}){% endif %}</h2>
+
+    <form method="post" class="vertical-form" id="train-form">
+      {% csrf_token %}
+      <!-- <div class="form-group">
+        <label for="model_name"><span class="icon">&#9881;</span> Model Name</label>
+        <select id="model_name" name="model_name" required>
+          <option value="">--Choose a Model--</option>
+          <option value="linear_regression">Linear Regression</option>
+          <option value="random_forest">Random Forest</option>
+          <option value="xgboost">XGBoost</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="train_date"><span class="icon">&#128197;</span> Training Date</label>
+        <input type="date" id="train_date" name="train_date" required>
+      </div> -->
+      <button type="submit" class="btn" id="train-btn">
+        <span class="icon">&#9654;</span> Start Training
+      </button>
+    </form>
+
+    <div id="loading-overlay" style="display: none;">
+      <div class="mining-loader">
+        <div class="cart-wheels"></div>
+        <div class="cart-body"> <span class="gold-gem">💰</span> </div>
+      </div>
+      <div class="loading-text" id="funny-loading-text">Training in progress... Please wait.</div>
+    </div>
+
+    <!-- Container for model metric charts -->
+    <div class="charts-container" id="charts-container">
+      <!-- Charts will be inserted here dynamically -->
+    </div>
+
+  </div>
+</div>
+
+<!-- Import Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Parse metrics JSON passed from backend
+const allModelMetrics = JSON.parse('{{ all_model_metrics_json|escapejs }}');
+
+// Metrics to plot for each model
+const metricLabels = ['mae', 'rmse', 'mape', 'r2_lstm'];
+
+// Colors for bars
+const colors = {
+  mae: 'rgba(255, 99, 132, 0.7)',
+  rmse: 'rgba(54, 162, 235, 0.7)',
+  mape: 'rgba(255, 206, 86, 0.7)',
+  r2_lstm: 'rgba(75, 192, 192, 0.7)',
+};
+
+// Create charts dynamically for each model
+const chartsContainer = document.getElementById('charts-container');
+
+for (const [modelName, metrics] of Object.entries(allModelMetrics)) {
+
+  // Create wrapper div and canvas for chart
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('chart-wrapper');
+  const title = document.createElement('h3');
+  title.textContent = modelName.replace('_', ' ').toUpperCase();
+  wrapper.appendChild(title);
+
+  const canvas = document.createElement('canvas');
+  const canvasId = 'chart-' + modelName;
+  canvas.id = canvasId;
+  wrapper.appendChild(canvas);
+  chartsContainer.appendChild(wrapper);
+
+  // Prepare data
+  const data = metricLabels.map(label => metrics[label]);
+
+  // Create Chart.js bar chart
+  new Chart(canvasId, {
+    type: 'bar',
+    data: {
+      labels: metricLabels,
+      datasets: [{
+        label: 'Metric Values',
+        data: data,
+        backgroundColor: metricLabels.map(label => colors[label]),
+        borderColor: metricLabels.map(label => colors[label].replace('0.7', '1')),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      },
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: false }
+      }
+    }
+  });
+}
+</script>
+
+<script>
+const funnyMessages = [
+  "Training the model... 🍯 Extracting digital gold!",
+  "Waiting for the AI dwarves to finish mining... 🧙‍♂️",
+  "Our model is polishing a gold bar for you! ✨",
+  "Shhh... The AI is consulting the gold oracle... 🔮",
+  "Teaching the model to spot gold faster than a prospector! 🏃‍♂️💰"
+];
+let msgIndex = 0;
+setInterval(function(){
+  const txt = document.getElementById("funny-loading-text");
+  if(txt) {
+    msgIndex = (msgIndex + 1) % funnyMessages.length;
+    txt.innerHTML = funnyMessages[msgIndex];
+  }
+}, 2100);
+</script>
+
+<script>
+document.getElementById("train-form").addEventListener("submit", function(e){
+  // Show overlay/loader
+  document.getElementById("loading-overlay").style.display = "flex";
+
+  // Disable button and change text
+  let btn = document.getElementById("train-btn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="icon">&#8635;</span> Training...';
+});
+</script>
+{% endblock %}

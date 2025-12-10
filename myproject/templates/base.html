@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gold Price Prediction{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <h2 class="logo">Gold Price Prediction</h2>
+        <ul>
+            {% if user.is_authenticated %}
+                <li class="welcome">Hi, <b>{{ user.username }}</b></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'logout' %}" class="btn-nav">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}" class="btn-nav">Login</a></li>
+                <li><a href="{% url 'signup' %}" class="btn-nav">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
